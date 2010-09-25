@@ -67,16 +67,15 @@
   :group 'switch-window)
 
 (defun switch-window-enumerate ()
-  "Return a list of one-letter strings to label current windows"
+  "Return a list of characters to label current windows"
   (subseq
-   (loop with layout = (split-string quail-keyboard-layout "")
-	 for row from 1 to 4
+   (loop for row from 1 to 4
 	 nconc (loop for col from 1 to 10
-		     collect (nth (+ 1 (* 2 col) (* 30 row)) layout)))
+		     collect (aref quail-keyboard-layout (+ (* 2 col) (* 30 row)))))
    0 (length (switch-window-list))))
 
 (defun switch-window-label (num)
-  "Return the label to use for a given window number"
+  "Return a character to use as a label for a given window number"
   (nth (- num 1) (switch-window-enumerate)))
 
 (defun switch-window-list (&optional from-current-window)
@@ -90,7 +89,7 @@ from-current-window is not nil"
   "prepare a temp buffer to diplay in the window while choosing"
   (let* ((label (switch-window-label num))
 	 (buf (get-buffer-create
-	       (format " *%s: %s*" label (buffer-name (window-buffer win))))))
+	       (format " *%c: %s*" label (buffer-name (window-buffer win))))))
     (with-current-buffer buf
       (let* ((w (window-width win))
 	     (h (window-body-height win))
@@ -158,7 +157,7 @@ ask user for the window where move to"
 		     (event-basic-type
 		      (read-event
 		       (if minibuffer-num
-			   (format "Move to window [minibuffer is %s]: "
+			   (format "Move to window [minibuffer is %c]: "
 				   (switch-window-label minibuffer-num))
 			 "Move to window: ")
 		       nil switch-window-timeout))))
@@ -166,9 +165,7 @@ ask user for the window where move to"
 		(if (or (null input) (eq input 'return))
 		    (keyboard-quit) ; timeout or RET
 		  (unless (symbolp input)
-		    (let* ((wchars (mapcar 'string-to-char
-					   (switch-window-enumerate)))
-			   (pos (position input wchars)))
+		    (let ((pos (position input (switch-window-enumerate))))
 		      (if pos
 			  (setq key (1+ pos))
 			(keyboard-quit))))))))
