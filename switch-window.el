@@ -66,10 +66,22 @@
   :type 'boolean
   :group 'switch-window)
 
+(defcustom switch-window-label-order '(1 2 3 4)
+  "List of numbers specifying the order of window labels.
+Each element indicates a line number of current keyboard layout starting from 1."
+  :type '(choice (const :tag "numerical (1 2 3 4)" :value (1 2 3 4))
+		 (const :tag "alphabetical (3 4 2 1)" :value (3 4 2 1))
+		 (list :tag "custom"
+		       (integer :tag "1st" :value 1)
+		       (integer :tag "2nd" :value 2)
+		       (integer :tag "3rd" :value 3)
+		       (integer :tag "4th" :value 4)))
+  :group 'switch-window)
+
 (defun switch-window-enumerate ()
   "Return a list of characters to label current windows"
   (subseq
-   (loop for row from 1 to 4
+   (loop for row in switch-window-label-order
 	 nconc (loop for col from 1 to 10
 		     collect (aref quail-keyboard-layout (+ (* 2 col) (* 30 row)))))
    0 (length (switch-window-list))))
