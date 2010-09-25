@@ -66,6 +66,11 @@
   :type 'boolean
   :group 'switch-window)
 
+(defcustom switch-window-upcase nil
+  "Non-nil means use capital letters for window labels"
+  :type 'boolean
+  :group 'switch-window)
+
 (defcustom switch-window-label-order '(1 2 3 4)
   "List of numbers specifying the order of window labels.
 Each element indicates a line number of current keyboard layout starting from 1."
@@ -88,7 +93,8 @@ Each element indicates a line number of current keyboard layout starting from 1.
 
 (defun switch-window-label (num)
   "Return a character to use as a label for a given window number"
-  (nth (- num 1) (switch-window-enumerate)))
+  (let ((char (nth (1- num) (switch-window-enumerate))))
+    (if switch-window-upcase (upcase char) char)))
 
 (defun switch-window-list (&optional from-current-window)
   "list windows for current frame, starting at top left unless
