@@ -124,7 +124,7 @@ from-current-window is not nil"
 	;; insert the label, with a hack to support ancient emacs
         (if (fboundp 'text-scale-increase)
 	    (insert label)
-	  (insert (propertize label 'face
+	  (insert (propertize (string label) 'face
 			      (list :height (* (* h switch-window-increase)
 					       (if (> w h) 2 1))))))))
     (set-window-buffer win buf)
